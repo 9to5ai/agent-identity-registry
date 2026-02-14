@@ -4,8 +4,9 @@
 
 As AI agents become autonomous actors in enterprise systems—spawning sub-agents, crossing API boundaries, making decisions without human-in-the-loop—existing identity and access management breaks down. This project demonstrates a solution.
 
-**Live Demo:** [https://agent-identity-registry.railway.app](https://agent-identity-registry.railway.app) *(link TBD)*  
-**API Docs:** [/docs](https://agent-identity-registry.railway.app/docs)
+**GitHub:** [github.com/9to5ai/agent-identity-registry](https://github.com/9to5ai/agent-identity-registry)  
+**Live Demo:** *Deployment pending - see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)*  
+**API Docs:** Run locally at `/docs` or deploy to get Swagger UI
 
 ## The Problem
 
