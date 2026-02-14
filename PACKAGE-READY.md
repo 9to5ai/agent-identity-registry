@@ -104,10 +104,11 @@ Start server, then open: http://localhost:8000/docs
 
 ### Before NIST Submission (March 15)
 
-1. **Convert to PDF**
-   - Use pandoc or Google Docs
-   - Add header/footer with submission info
-   - Final proofread
+1. **Convert to PDF** (2 minutes)
+   - Open `docs/nist-submission.html` in Chrome/Safari
+   - Press Cmd+P (Print)
+   - Select "Save as PDF"
+   - Filename: `Agent-Identity-Governance-NIST-Submission.pdf`
 
 2. **Record Video**
    - Follow VIDEO-SCRIPT.md
