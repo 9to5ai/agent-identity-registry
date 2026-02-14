@@ -1,0 +1,187 @@
+
+[1m[94m============================================================
+  Agent Identity Registry - Demo Scenario
+============================================================[0m
+
+Target: http://localhost:8000
+Time: 2026-02-14T21:35:13.587099
+[1m[92m[Step 0][0m Resetting database for clean demo...
+  ✓ Database reset
+
+
+[1m[94m============================================================
+  PHASE 1: Agent Registration
+============================================================[0m
+
+[1m[92m[Step 1][0m Human (Jun) authorizes Agent A ('DataAnalyzer')
+  → Jun wants to analyze customer data
+  → Scope: read:database, write:reports, create:charts
+
+  Response:
+[93m{
+  "agent_id": "agent_bc0380d28a45709b",
+  "credentials": {
+    "api_key": "air_9q7pKEDEeklZlUyHCcqVdpU90FIuDtym75zeEkSyB7Q",
+    "expires_at": 1802601313
+  }
+}[0m
+
+  ✓ Agent A registered with ID: [1magent_bc0380d28a45709b[0m
+
+[1m[94m============================================================
+  PHASE 2: Delegation Chain
+============================================================[0m
+
+[1m[92m[Step 2][0m Agent A spawns Agent B ('ReportGenerator')
+  → Agent A needs help generating reports
+  → Scope: write:reports (subset of A's scope)
+
+  Response:
+[93m{
+  "agent_id": "agent_5696f112e3a94804",
+  "credentials": {
+    "api_key": "air_f2fCn_iZEydNxY6Ab7xMbKJVoV4gFRvs0NjBeSXJ2nk",
+    "expires_at": 1802601313
+  },
+  "delegation_chain": [
+    {
+      "type": "human",
+      "id": "user:jun@apra.gov.au",
+      "name": null
+    },
+    {
+      "type": "agent",
+      "id": "agent_bc0380d28a45709b",
+      "name": "DataAnalyzer"
+    },
+    {
+      "type": "agent",
+      "id": "agent_5696f112e3a94804",
+      "name": "ReportGenerator"
+    }
+  ],
+  "delegation_depth": 1
+}[0m
+
+  ✓ Agent B spawned with delegation depth: 1
+  ✓ Delegation chain: user:jun@apra.gov.au → DataAnalyzer → ReportGenerator
+[1m[92m[Step 3][0m Agent B spawns Agent C ('ChartMaker')
+  → Agent B needs help creating charts
+  → BUT Agent B only has 'write:reports' scope...
+
+  → First, try requesting 'create:charts' (outside B's scope):
+
+  [91mResponse (expected failure):[0m
+[93m{
+  "detail": "Scope attenuation violation: ['create:charts'] not in parent scope"
+}[0m
+
+  ✓ [1mScope attenuation enforced![0m Agent C can't have more permissions than B
+
+  → Now let's have Agent A spawn Agent C directly:
+
+  Response:
+[93m{
+  "agent_id": "agent_377514c491a5e940",
+  "credentials": {
+    "api_key": "air_eow97YNsb-Y-8ayUWZCHdJVBBsVOlDHBxfxIWQay5dc",
+    "expires_at": 1802601313
+  },
+  "delegation_chain": [
+    {
+      "type": "human",
+      "id": "user:jun@apra.gov.au",
+      "name": null
+    },
+    {
+      "type": "agent",
+      "id": "agent_bc0380d28a45709b",
+      "name": "DataAnalyzer"
+    },
+    {
+      "type": "agent",
+      "id": "agent_377514c491a5e940",
+      "name": "ChartMaker"
+    }
+  ],
+  "delegation_depth": 1
+}[0m
+
+  ✓ Agent C spawned successfully from Agent A
+
+[1m[94m============================================================
+  PHASE 3: Agent Actions (Audit Trail)
+============================================================[0m
+
+[1m[92m[Step 4][0m Agent A reads customer database
+  → Action: read:database
+  → Resource: customers_table
+  → Human authority traced: [1muser:jun@apra.gov.au[0m
+
+[1m[92m[Step 5][0m Agent A reads transactions
+  → Action: read:database
+  → Resource: transactions_table
+  → Human authority traced: [1muser:jun@apra.gov.au[0m
+
+[1m[92m[Step 6][0m Agent B generates Q1 report
+  → Action: write:reports
+  → Resource: quarterly_report.pdf
+  → Human authority traced: [1muser:jun@apra.gov.au[0m
+
+[1m[92m[Step 7][0m Agent C creates sales chart
+  → Action: create:charts
+  → Resource: sales_chart.png
+  → Human authority traced: [1muser:jun@apra.gov.au[0m
+
+[1m[92m[Step 8][0m Agent A compiles final analysis
+  → Action: write:reports
+  → Resource: final_analysis.pdf
+  → Human authority traced: [1muser:jun@apra.gov.au[0m
+
+
+[1m[94m============================================================
+  PHASE 4: Forensic Queries
+============================================================[0m
+
+[1m[92m[Step 9][0m Query: 'Show me Agent C's full audit trace'
+  → Who authorized Agent C? What has it done?
+
+  Delegation Chain:
+    ├─ 👤 user:jun@apra.gov.au
+    ├─ 🤖 DataAnalyzer (agent_bc0380d28a...)
+    └─ 🤖 ChartMaker (agent_377514c491...)
+
+  ✓ Every action by Agent C traces back to: [1muser:jun@apra.gov.au[0m
+[1m[92m[Step 10][0m Query: 'Show all actions authorized by Jun'
+
+  Found 5 actions authorized by Jun:
+
+  • [write:reports] final_analysis.pdf by DataAnalyzer
+  • [create:charts] sales_chart.png by ChartMaker
+  • [write:reports] quarterly_report.pdf by ReportGenerator
+  • [read:database] transactions_table by DataAnalyzer
+  • [read:database] customers_table by DataAnalyzer
+
+
+[1m[94m============================================================
+  DEMO COMPLETE
+============================================================[0m
+
+
+  [1mSummary:[0m
+  • Agents registered: 3
+  • Actions logged: 5
+  • All actions trace back to human authority
+  
+  [1mKey Concepts Demonstrated:[0m
+  ✓ Agent Identity: Each agent has unique ID (not shared API keys)
+  ✓ Delegation: Sub-agents inherit bounded authority from parents
+  ✓ Scope Attenuation: Child can't have MORE permissions than parent
+  ✓ Audit Trail: Every action logged with delegation chain
+  ✓ Forensic Queries: Can trace any action to human authority
+  
+  [1mExplore the API:[0m
+  • Swagger docs: http://localhost:8000/docs
+  • Agent list: http://localhost:8000/agents
+  • Audit logs: http://localhost:8000/audit/query
+
