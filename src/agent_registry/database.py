@@ -7,12 +7,19 @@ from pathlib import Path
 from typing import Optional
 from contextlib import contextmanager
 
-DATABASE_PATH = Path(__file__).parent.parent.parent / "data" / "registry.db"
+import os
+
+# Use /tmp for serverless environments (Vercel), otherwise use local data dir
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    DATABASE_PATH = Path("/tmp/registry.db")
+else:
+    DATABASE_PATH = Path(__file__).parent.parent.parent / "data" / "registry.db"
 
 
 def get_db_path() -> Path:
     """Get database path, creating directory if needed."""
-    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not str(DATABASE_PATH).startswith("/tmp"):
+        DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     return DATABASE_PATH
 
 
