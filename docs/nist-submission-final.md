@@ -507,8 +507,8 @@ CREATE INDEX idx_audit_timestamp ON audit_log(timestamp);
 ## Appendix C: Links
 
 - **GitHub Repository:** https://github.com/9to5ai/agent-identity-registry
-- **Live Demo:** [Deployment URL]
-- **API Documentation:** [Deployment URL]/docs
+- **Live Demo:** https://agent-identity-registry.vercel.app
+- **API Documentation:** https://agent-identity-registry.vercel.app/docs
 - **Video Walkthrough:** [YouTube/Vimeo URL]
 
 ---
