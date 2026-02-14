@@ -5,8 +5,10 @@
 As AI agents become autonomous actors in enterprise systems—spawning sub-agents, crossing API boundaries, making decisions without human-in-the-loop—existing identity and access management breaks down. This project demonstrates a solution.
 
 **GitHub:** [github.com/9to5ai/agent-identity-registry](https://github.com/9to5ai/agent-identity-registry)  
-**Live Demo:** *Deployment pending - see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)*  
-**API Docs:** Run locally at `/docs` or deploy to get Swagger UI
+
+[![Run on Replit](https://replit.com/badge/github/9to5ai/agent-identity-registry)](https://replit.com/@9to5ai/agent-identity-registry)
+
+**Quick Start:** Click the button above to run instantly on Replit (no setup needed)
 
 ## The Problem
 
