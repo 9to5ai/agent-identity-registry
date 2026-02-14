@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Identity Governance: An Accountability Framework for Autonomous AI Agents</title>
+    <style>
+        @media print {
+            body { font-size: 11pt; }
+            h1 { page-break-before: avoid; }
+            h2 { page-break-after: avoid; }
+            table { page-break-inside: avoid; }
+            pre { page-break-inside: avoid; }
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            color: #333;
+        }
+        
+        h1 {
+            font-size: 18pt;
+            text-align: center;
+            margin-bottom: 0.5em;
+            color: #000;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            margin-top: 1.5em;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3em;
+            color: #000;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            margin-top: 1em;
+            color: #333;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-style: italic;
+            margin-bottom: 2em;
+        }
+        
+        .metadata {
+            text-align: center;
+            margin-bottom: 2em;
+            font-size: 10pt;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+        }
+        
+        pre, code {
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+        }
+        
+        pre {
+            padding: 1em;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        
+        .abstract {
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 1em;
+            margin: 1em 0;
+            border-left: 3px solid #666;
+        }
+        
+        .keywords {
+            font-size: 10pt;
+            margin-top: 0.5em;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 2em 0;
+        }
+        
+        .footer {
+            margin-top: 3em;
+            font-size: 9pt;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Agent Identity Governance</h1>
+<p class="subtitle">An Accountability Framework for Autonomous AI Agents</p>
+
+<p class="metadata">
+    <strong>Submission to NIST Request for Information on AI Accountability and Transparency</strong><br><br>
+    Submitted by: Jun M<br>
+    Date: February 2026<br>
+    Category: Technical Framework with Working Implementation
+</p>
+
+<hr>
+
+<div class="abstract">
+<strong>Abstract</strong><br><br>
+Autonomous AI agents represent a new class of computational principal that existing accountability frameworks were not designed to handle. Unlike traditional software services, agents spawn dynamically, delegate authority to sub-agents, operate without continuous human oversight, and make decisions across organizational boundaries. Current Identity and Access Management (IAM) systems cannot answer fundamental accountability questions: "Which agent performed this action?" and "Who authorized it?"
+
+This submission proposes <strong>Agent Identity Governance</strong>—a framework providing explicit agent identity, delegation chain tracking, and audit trails that trace all agent actions back to human authority. We demonstrate feasibility with a working proof-of-concept implementation, deployed and publicly accessible.
+
+<p class="keywords"><strong>Keywords:</strong> AI governance, agent identity, autonomous systems, accountability, delegation, audit trail</p>
+</div>
+
+<h2>1. Introduction</h2>
+
+<h3>1.1 The Emergence of Autonomous Agents</h3>
+
+<p>The deployment of autonomous AI agents in enterprise environments has accelerated dramatically. Organizations now deploy agents for customer service, code generation, data analysis, security monitoring, and operational automation. These agents increasingly operate with minimal human oversight, making decisions and taking actions independently.</p>
+
+<p>A defining characteristic of modern agent architectures is <strong>agent spawning</strong>—the ability of one agent to create sub-agents to accomplish tasks. A data analysis agent might spawn a database query agent, which spawns a visualization agent, creating chains of autonomous actors operating on behalf of a distant human authorizer.</p>
+
+<h3>1.2 The Accountability Gap</h3>
+
+<p>This proliferation creates an accountability gap that existing governance frameworks cannot address:</p>
+
+<table>
+    <tr><th>Traditional Assumption</th><th>Agent Reality</th></tr>
+    <tr><td>Principals are static (humans, services)</td><td>Agents spawn dynamically, exist temporarily</td></tr>
+    <tr><td>Actions trace to human operators</td><td>Agents operate autonomously, decisions may be hours from human involvement</td></tr>
+    <tr><td>API credentials identify actors</td><td>Multiple agents share credentials; logs show "key X" not "agent Y"</td></tr>
+    <tr><td>Access control is human-centric</td><td>Agents delegate authority to sub-agents without human review</td></tr>
+</table>
+
+<p>When a compliance officer asks "Who authorized this database access?", current systems can only answer "API key prod-ai-service." They cannot identify which agent, created by whom, operating under what authority, performed the action.</p>
+
+<h3>1.3 Regulatory Imperatives</h3>
+
+<p>Multiple regulatory frameworks now require accountability mechanisms that assume we can identify AI actors:</p>
+
+<ul>
+    <li><strong>NIST AI Risk Management Framework (AI RMF):</strong> The Govern function requires mechanisms for accountability, but does not specify identity infrastructure for autonomous agents.</li>
+    <li><strong>EU AI Act (Article 12):</strong> High-risk AI systems must maintain logs sufficient for traceability—impossible without agent identity.</li>
+    <li><strong>APRA CPS 230/234 (Australia):</strong> Operational resilience and information security standards require audit trails that identify principals.</li>
+    <li><strong>ISO/IEC 42001:</strong> AI management systems require documented accountability—again assuming identifiable actors.</li>
+</ul>
+
+<p>The gap is clear: regulations demand "who is accountable?" but provide no technical mechanism to answer it for autonomous agents.</p>
+
+<h3>1.4 Our Contribution</h3>
+
+<p>This submission proposes <strong>Agent Identity Governance</strong>, a framework that provides:</p>
+
+<ol>
+    <li><strong>Explicit Agent Identity:</strong> Every agent receives unique, traceable identity—not shared API keys</li>
+    <li><strong>Delegation Chain Tracking:</strong> When Agent A spawns Agent B, the relationship is recorded</li>
+    <li><strong>Scope Attenuation:</strong> Child agents cannot exceed parent permissions</li>
+    <li><strong>Audit Trails:</strong> Every action logs the agent ID and traces to human authority</li>
+    <li><strong>Lifecycle Management:</strong> Agents have explicit states (active, suspended, terminated)</li>
+</ol>
+
+<p>We provide a <strong>working proof-of-concept</strong> demonstrating these concepts are implementable with existing technology.</p>
+
+<h2>2. Framework Specification</h2>
+
+<h3>2.1 Agent Identity Registry</h3>
+
+<p>The core component is a registry that maintains identity records for all agents:</p>
+
+<pre>
+Agent Identity Record
+├── agent_id          Unique identifier (e.g., "agent_4e5f93b4a829bc4c")
+├── agent_name        Human-readable name
+├── agent_type        Classification: autonomous | semi-autonomous | tool
+├── created_at        Timestamp of creation
+├── created_by        Human ID or parent agent ID
+├── authority_source  Origin of authority: human | delegated | policy
+├── scope             Array of permitted actions
+├── lifecycle_state   Current state: active | suspended | terminated
+└── credentials       Authentication material (API key, certificate, etc.)
+</pre>
+
+<p><strong>Design Principle:</strong> Agents are first-class principals, not anonymous API consumers. Every agent action is attributable to a specific, traceable identity.</p>
+
+<h3>2.2 Delegation Model</h3>
+
+<p>When an agent creates a sub-agent, the system records an explicit delegation relationship:</p>
+
+<pre>
+Delegation Record
+├── delegation_id     Unique identifier
+├── parent_id         Creating agent's ID
+├── child_id          Created agent's ID  
+├── delegated_at      Timestamp
+└── delegation_depth  Distance from human authority
+</pre>
+
+<p><strong>Scope Attenuation Rule:</strong> A child agent's scope must be a subset of its parent's scope. This prevents privilege escalation through delegation chains.</p>
+
+<pre>
+Example:
+  Human Alice authorizes Agent A with scope: [read:database, write:reports, create:charts]
+  
+  Agent A spawns Agent B with scope: [write:reports]           ✓ Valid (subset)
+  Agent B spawns Agent C with scope: [write:reports]           ✓ Valid (subset of B)
+  Agent B spawns Agent D with scope: [read:database]           ✗ Invalid (not in B's scope)
+</pre>
+
+<p><strong>Human Ultimate Authority:</strong> All delegation chains terminate at a human authorizer. Forensic queries can always answer: "Which human authorized this agent?"</p>
+
+<h3>2.3 Audit Trail</h3>
+
+<p>Every agent action generates an audit record:</p>
+
+<pre>
+Audit Record
+├── log_id            Unique identifier
+├── agent_id          Acting agent's ID
+├── action            Action performed (e.g., "read:database")
+├── resource          Resource accessed (e.g., "customers_table")
+├── timestamp         When the action occurred
+├── human_authority   Traced human authorizer
+├── success           Whether the action succeeded
+└── metadata          Additional context (optional)
+</pre>
+
+<p><strong>Key Innovation:</strong> The <code>human_authority</code> field is computed by traversing the delegation chain, not stored at action time. This ensures the trail is always accurate even if delegation relationships are later discovered to be compromised.</p>
+
+<h3>2.4 Lifecycle States</h3>
+
+<pre>
+Provisioned → Active → Suspended → Terminated
+     ↓          ↓          ↓           ↓
+  Identity   Normal     Incident   Credentials
+  issued   operation   response     revoked
+</pre>
+
+<p><strong>Cascade Termination:</strong> When a parent agent is terminated, all child agents are automatically terminated. This prevents orphaned agents with stale authority.</p>
+
+<h2>3. Technical Implementation</h2>
+
+<h3>3.1 Proof-of-Concept Architecture</h3>
+
+<p>We provide a working implementation demonstrating these concepts:</p>
+
+<pre>
+┌────────────────────────────────────────────────────────────────┐
+│                     Agent Identity Registry                    │
+│                         (FastAPI + SQLite)                     │
+├────────────────────────────────────────────────────────────────┤
+│  POST /agents/register      Create agent, issue identity       │
+│  POST /agents/{id}/spawn    Delegate to sub-agent              │
+│  POST /audit/log            Record agent action                │
+│  GET  /audit/trace/{id}     Full delegation + audit trail      │
+│  GET  /audit/query          Forensic log search                │
+└────────────────────────────────────────────────────────────────┘
+</pre>
+
+<p><strong>Technology Stack:</strong> Python 3.12, FastAPI, SQLite, Pydantic v2</p>
+<p><strong>Repository:</strong> https://github.com/9to5ai/agent-identity-registry</p>
+
+<h3>3.2 Demonstration Scenario</h3>
+
+<p>Our demo script executes this scenario:</p>
+
+<ol>
+    <li><strong>Human Authorization:</strong> Jun authorizes Agent A ("DataAnalyzer") with scope <code>[read:database, write:reports, create:charts]</code></li>
+    <li><strong>First Delegation:</strong> Agent A spawns Agent B ("ReportGenerator") with scope <code>[write:reports]</code></li>
+    <li><strong>Scope Enforcement Test:</strong> Agent B attempts to spawn Agent C with scope <code>[create:charts]</code>—<strong>denied</strong> because <code>create:charts</code> is not in B's scope</li>
+    <li><strong>Valid Delegation:</strong> Agent A spawns Agent C ("ChartMaker") with scope <code>[create:charts]</code></li>
+    <li><strong>Action Logging:</strong> All three agents perform actions, each logged with full traceability</li>
+    <li><strong>Forensic Query:</strong> Query Agent C's audit trace—returns complete delegation chain back to Jun</li>
+</ol>
+
+<h3>3.3 Implementation Metrics</h3>
+
+<table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Lines of code</td><td>1,598</td></tr>
+    <tr><td>API endpoints</td><td>10</td></tr>
+    <tr><td>Test coverage</td><td>8 tests, 100% pass</td></tr>
+    <tr><td>Dependencies</td><td>4 (FastAPI, uvicorn, pydantic, python-multipart)</td></tr>
+</table>
+
+<h2>4. Alignment with Existing Standards</h2>
+
+<h3>4.1 NIST AI Risk Management Framework</h3>
+
+<table>
+    <tr><th>RMF Function</th><th>Agent Identity Governance Support</th></tr>
+    <tr><td><strong>GOVERN</strong></td><td>Agent registry provides organizational accountability infrastructure</td></tr>
+    <tr><td><strong>MAP</strong></td><td>Delegation chains document agent relationships and authority flows</td></tr>
+    <tr><td><strong>MEASURE</strong></td><td>Audit trails enable continuous monitoring of agent behavior</td></tr>
+    <tr><td><strong>MANAGE</strong></td><td>Lifecycle management enables rapid incident response</td></tr>
+</table>
+
+<h3>4.2 EU AI Act</h3>
+
+<p><strong>Article 12 (Record-keeping):</strong> "High-risk AI systems shall be designed and developed with capabilities enabling the automatic recording of events ('logs')..."</p>
+
+<p>Agent Identity Governance provides structured logs identifying specific agents (not anonymous API calls), delegation chains documenting authority flows, and forensic query capability for regulatory investigation.</p>
+
+<h3>4.3 Zero Trust Architecture</h3>
+
+<p>Agent Identity Governance extends Zero Trust principles to autonomous agents: verify agent identity at every API boundary, enforce least privilege through scope attenuation, and enable rapid forensic investigation through comprehensive audit trails.</p>
+
+<h2>5. Open Research Questions</h2>
+
+<p>This framework is intentionally v0.1. We invite community input on:</p>
+
+<ol>
+    <li><strong>Granularity:</strong> Should ephemeral sub-agents receive full identity registration?</li>
+    <li><strong>Cross-Organization Agents:</strong> How should identity work across organizational boundaries?</li>
+    <li><strong>Revocation Latency:</strong> What's acceptable latency to revoke a compromised agent?</li>
+    <li><strong>Privacy vs. Auditability:</strong> Should audit logs include action payloads or only metadata?</li>
+</ol>
+
+<h2>6. Conclusion</h2>
+
+<p>Autonomous AI agents create an accountability gap that existing governance frameworks cannot address. Agent Identity Governance provides the missing infrastructure layer: explicit identity, delegation tracking, scope enforcement, and audit trails.</p>
+
+<p>This is not theoretical. We provide working code (1,598 lines, 8 tests passing), a public repository, and a live demo. The concepts are implementable with existing technology, today.</p>
+
+<p>We invite engagement from NIST and regulatory bodies, standards organizations, enterprise practitioners, and researchers to refine and extend this framework.</p>
+
+<hr>
+
+<h2>Appendix: Links</h2>
+
+<ul>
+    <li><strong>GitHub Repository:</strong> https://github.com/9to5ai/agent-identity-registry</li>
+    <li><strong>API Documentation:</strong> [Deployment URL]/docs</li>
+</ul>
+
+<p class="footer">
+    <em>This submission represents personal views and does not represent any organizational position.</em><br><br>
+    License: Creative Commons Attribution 4.0 International (CC BY 4.0)<br>
+    Version: 1.0 | February 2026
+</p>
+
+</body>
+</html>
